@@ -1,25 +1,44 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useState } from "react";
+import DynamicForm from "./components/DynamicForm";
+import TableDisplay from "./components/TableDisplay";
+import MessageBox from "./components/MessageBox";
 
-function App() {
+const App = () => {
+  const [submittedData, setSubmittedData] = useState([]);
+  const [message, setMessage] = useState("");
+
+  const handleFormSubmit = (data) => {
+    setSubmittedData((prevData) => [...prevData, data]);
+    setMessage("Form submitted successfully!");
+  };
+
+  const handleDeleteEntry = (index) => {
+    const updatedData = submittedData.filter((_, i) => i !== index);
+    setSubmittedData(updatedData);
+    setMessage("Entry deleted successfully.");
+  };
+
+  const handleEditEntry = (index, updatedData) => {
+    const newData = [...submittedData];
+    newData[index] = updatedData;
+    setSubmittedData(newData);
+    setMessage("Changes saved successfully.");
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      <h1>Dynamic Form </h1>
+      <MessageBox message={message} />
+      <DynamicForm onSubmit={handleFormSubmit} />
+      {submittedData.length > 0 && (
+        <TableDisplay
+          data={submittedData}
+          onDelete={handleDeleteEntry}
+          onEdit={handleEditEntry}
+        />
+      )}
     </div>
   );
-}
+};
 
 export default App;
